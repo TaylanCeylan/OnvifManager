@@ -1,0 +1,50 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+	<EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SPCConnector\SPCConnector.csproj" ReferenceOutputAssembly="false" Private="false" />
+  </ItemGroup>
+
+  <Target Name="CopySPCConnectorToOutput" AfterTargets="Build">
+    <ItemGroup>
+      <SPCConnectorOutput Include="$(MSBuildProjectDirectory)\..\SPCConnector\bin\$(Configuration)\net10.0-windows\**\*"
+                          Exclude="$(MSBuildProjectDirectory)\..\SPCConnector\bin\$(Configuration)\net10.0-windows\**\DevExpress.*;$(MSBuildProjectDirectory)\..\SPCConnector\bin\$(Configuration)\net10.0-windows\**\SVPlusLocalizerLib.dll;$(MSBuildProjectDirectory)\..\SPCConnector\bin\$(Configuration)\net10.0-windows\Snapshots\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(SPCConnectorOutput)"
+          DestinationFiles="@(SPCConnectorOutput->'$(OutDir)SPCConnector\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CopySPCConnectorToPublish" BeforeTargets="Publish">
+    <ItemGroup>
+      <SPCConnectorPublishOutput Include="$(MSBuildProjectDirectory)\..\SPCConnector\bin\$(Configuration)\net10.0-windows\**\*"
+                                 Exclude="$(MSBuildProjectDirectory)\..\SPCConnector\bin\$(Configuration)\net10.0-windows\**\DevExpress.*;$(MSBuildProjectDirectory)\..\SPCConnector\bin\$(Configuration)\net10.0-windows\**\SVPlusLocalizerLib.dll;$(MSBuildProjectDirectory)\..\SPCConnector\bin\$(Configuration)\net10.0-windows\Snapshots\**\*" />
+    </ItemGroup>
+    <Copy SourceFiles="@(SPCConnectorPublishOutput)"
+          DestinationFiles="@(SPCConnectorPublishOutput->'$(PublishDir)SPCConnector\%(RecursiveDir)%(Filename)%(Extension)')"
+          SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="RemoveLegacyConnectorFilesFromOutput" AfterTargets="CopySPCConnectorToOutput">
+    <ItemGroup>
+      <LegacyConnectorOutput Include="$(OutDir)SPCConnector\**\DevExpress.*;$(OutDir)SPCConnector\**\SVPlusLocalizerLib.dll" />
+    </ItemGroup>
+    <Delete Files="@(LegacyConnectorOutput)" />
+  </Target>
+
+  <Target Name="RemoveLegacyConnectorFilesFromPublish" AfterTargets="CopySPCConnectorToPublish">
+    <ItemGroup>
+      <LegacyConnectorPublish Include="$(PublishDir)SPCConnector\**\DevExpress.*;$(PublishDir)SPCConnector\**\SVPlusLocalizerLib.dll" />
+    </ItemGroup>
+    <Delete Files="@(LegacyConnectorPublish)" />
+  </Target>
+
+</Project>

@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="OnvifManager/OnvifManager.csproj" />
+  <Project Path="SPCConnector/SPCConnector.csproj" Id="040bc44e-d3f7-4ba8-9f99-1192690d8370" />
+</Solution>
